@@ -1,7 +1,7 @@
 import random
 import math
 
-DELTA = 0.01   # Mutation step size
+DELTA = 0.01   # Mutation(돌연변이) step size 
 NumEval = 0    # Total number of evaluations
 
 
@@ -17,16 +17,16 @@ def main():
     displayResult(solution, minimum)
 
 
-def createProblem(): ###
+def createProblem(): ### 파일에서 식과 도메인을 읽어와 문제를 표현하는 튜플을 반환한다.
     ## Read in an expression and its domain from a file.
     ## Then, return a problem 'p'.
     ## 'p' is a tuple of 'expression' and 'domain'.
     ## 'expression' is a string.
-    ## 'domain' is a list of 'varNames', 'low', and 'up'.
+    ## 'domain' is a list of 'varNames', 'low', and 'up'.   
     ## 'varNames' is a list of variable names.
     ## 'low' is a list of lower bounds of the varaibles.
     ## 'up' is a list of upper bounds of the varaibles.
-    fileName = input("Enter the filename of a function :")
+    fileName = input("Enter the filename of a function")
     infile = open(fileName, 'r') # 파일 열고, 읽기 모드
     expression = infile.readline() # 첫번째 줄 읽기
   
@@ -35,12 +35,12 @@ def createProblem(): ###
     up = []
     
     line = infile.readline() # 한 줄 읽기
-    while line != '':
-        data = line.split(',')
+    while line !="":
+        data = line.split(",")
         varName.append(data[0])
-        low.append(data[1])
-        up.append(data[2])
-        line = infile.readline()    
+        low.append(float(data[1]))
+        up.append(float(data[2]))
+        line = infile.readline().strip()    
     infile.close() # 다 읽었으면 파일을 닫아준다.
     domain = [varName, low, up]    
     
@@ -60,14 +60,14 @@ def steepestAscent(p):
             valueC = valueS
     return current, valueC
 
-def randomInit(p): ###
+def randomInit(p): ### 초기점 생성 함수
     domain = p[1]
     low = domain[1]
     up = domain[2]
     init = []
     
     for i in range(len(low)):
-        r = random.uniform(low, up)
+        r = random.uniform(low[i], up[i])
         init.append(r)
         
     return init    # Return a random initial point
@@ -88,6 +88,13 @@ def evaluate(current, p):
 
 
 def mutants(current, p): ###
+    neighbors = []
+    for i in range(len(current)):
+        mutant = mutate(current, i, DELTA, p)
+        neighbors.append(mutant)
+        mutant = mutate(current, i, -DELTA, p)
+        neighbors.append(mutant)
+        
     return neighbors     # Return a set of successors
 
 
@@ -101,6 +108,15 @@ def mutate(current, i, d, p): ## Mutate i-th of 'current' if legal
     return curCopy
 
 def bestOf(neighbors, p): ###
+    best = neighbors[0]
+    bestValue = evaluate(best, p)
+
+    for neighbor in neighbors[1:]:
+        neighborValue = evaluate(neighbor, p)
+        if neighborValue > bestValue:
+            best = neighbor
+            bestValue = neighborValue
+
     return best, bestValue
 
 def describeProblem(p):
@@ -134,3 +150,6 @@ def coordinate(solution):
 
 
 main()
+
+
+
