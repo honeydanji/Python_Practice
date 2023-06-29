@@ -1,1 +1,2 @@
-config/API.env
+# 특정 확장자 제외하기
+.env
