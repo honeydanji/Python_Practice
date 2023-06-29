@@ -1,0 +1,2 @@
+This is an example.
+We are writing to a file.
