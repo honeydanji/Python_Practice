@@ -18,3 +18,4 @@ def writecsv(filename, the_list): # filename : 만들(작성할) 파일, the_lis
         a = csv.writer(f, delimiter = ',')
         a.writerows(the_list)
 # writecsv() 함수에서는 with 문을 사용해 코드 길이가 조금 더 짧습니다.
+# 수정
