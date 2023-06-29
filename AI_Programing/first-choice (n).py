@@ -11,14 +11,14 @@ def main():
     p = createProblem()   # 'p': (expr, domain)
     # Call the search algorithm
     solution, minimum = firstChoice(p)
-    # Show the problem and algorithm settings
+    # Show the problem and algorithm settings/p
     describeProblem(p)
     displaySetting()
     # Report results
     displayResult(solution, minimum)
 
 
-def createProblem(): ###
+def createProblem(): ### 파일 열어서 튜플 만들어주기. 튜플은 수정이 안된다.
     ## Read in an expression and its domain from a file.
     ## Then, return a problem 'p'.
     ## 'p' is a tuple of 'expression' and 'domain'.
@@ -27,6 +27,30 @@ def createProblem(): ###
     ## 'varNames' is a list of variable names.
     ## 'low' is a list of lower bounds of the varaibles.
     ## 'up' is a list of upper bounds of the varaibles.
+    
+    fileName = input("File Name : ")
+    infile = open(fileName, 'r')
+    expression = infile.readline()
+    
+    varNames = []
+    low = []
+    up = []
+    
+    lines = infile.readlines()
+    
+    for line in lines:
+        data = line.split(",")
+        varNames.append(data[0])
+        low.append(data[1])
+        up.append(data[2])
+        line = infile.readline().strip()  # 무슨 의미인가?
+    infile.close()
+    domain = [varNames, low, up]
+    
+    # print(varNames)
+    # print(low)
+    # print(up)
+    
     return expression, domain
 
 
