@@ -1,21 +1,19 @@
-import os, re
-import urllib.request as ur 
-# urllib : 웹에서 얻은 데이터를 다루는 파이썬 패키지. 4개의 모듈이 존재한다.
-# requests : urllib 4개의 모듈 중 하나인 웹 문서를 열어 데이터를 읽어오는 모듈
-# from CSV import rwcsv
-# 다른 파일에 존재할 때 import하는 방법
-# usecsv : csv 파일을 읽고, 쓰고 할 수 있는 클래스다.
-from bs4 import BeautifulSoup as bs
-#  HTML/XML 파일에서 데이터를 추출하고 파싱된 데이터를 탐색하고, 
-#  HTML/XML 구조를 조작하기 위한 편리한 방법을 제공
+import requests
+from bs4 import BeautifulSoup
 
-news = 'https://www.weeklytrade.co.kr/main/index.html'
-soup = bs(ur.urlopen(news).read(), 'html.parser')
-#print(soup) # url 정보 확인
+# Send a GET request to the website
+url = "https://www.itworld.co.kr/main/"
+response = requests.get(url)
 
-#print(soup.find_all('div', {"id" : "main_middle_news"}))
-for i in soup.find_all('div', {"id" : "main_middle_news"}):
-    print(i.text)
-        
+# Create a BeautifulSoup object to parse the HTML content
+soup = BeautifulSoup(response.text, "html.parser")
 
-    
+# Find the news articles on the page
+news_articles = soup.find_all("div", class_="news_list_area")
+
+# Extract the information from the news articles
+for article in news_articles:
+    title = article.find("h4").text.strip()
+    date = article.find("span", class_="date").text.strip()
+    link = article.find("a")["href"]
+    print(f"Title: {title}\nDate: {date}\nLink: {link}\n")
