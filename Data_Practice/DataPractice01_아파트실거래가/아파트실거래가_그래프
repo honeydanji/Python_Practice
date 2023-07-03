@@ -1,0 +1,28 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib
+
+# 그래프 한글
+matplotlib.rcParams['font.family'] ='Malgun Gothic'
+matplotlib.rcParams['axes.unicode_minus'] =False
+
+# CSV 파일을 읽는 객체생성
+df = pd.read_csv('C:/Users/user/Desktop/Python/Data_Practice/DataPractice01_아파트실거래가/apt_prac2.csv', encoding = 'cp949')
+
+# 문자열을 정수로 변환하자
+df['가격'] = df['가격'].str.replace(',', '').astype(int)
+
+# 지역별 평균 가격을 계산하고
+avg_price_area = df.groupby('지역')['가격'].mean().reset_index()
+
+# 가격을 내림차순으로 정렬하고 상위 10개만 선택!
+top10_areas = avg_price_area.sort_values('가격', ascending=False).head(10)
+
+# 그래프를 생성
+plt.figure(figsize=(15, 10))
+sns.barplot(x='가격', y='지역', data=top10_areas, orient='h')
+plt.title('부산 지역별 아파트 평균 가격 Top 10')
+plt.xlabel('평균 가격')
+plt.ylabel('지역')
+plt.show()
