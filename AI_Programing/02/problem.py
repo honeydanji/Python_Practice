@@ -51,7 +51,7 @@ class Numeric(Problem): # 소괄호에 부모클래스를 넣는다.
      
     # 문제 생성 클래스 (createProblem)
     def setVariables(self): ### 똑같은 수치문제니까. 읽어오고 변수 만들고 하는건 똑같다. #최소값 찾는 알고리즘만 달라
-        fileName = "problem/" + input("Enter the filename of function:") + ".txt"
+        fileName = input("Enter the filename of function:") + ".txt"
         infile = open(fileName,'r')
         self._expression = infile.readline() #txt파일 공식적힌 첫째줄
         varName = []
@@ -85,7 +85,7 @@ class Numeric(Problem): # 소괄호에 부모클래스를 넣는다.
                    # as a list of values
         
     def evaluate(self, current):
-        self._NumEval += 1
+        self._numEval += 1
         expr = self._expression     # p[0] is function expression
         varNames = self._domain[0]  # p[1] is domain: [varNames, low, up]
         for i in range(len(varNames)):

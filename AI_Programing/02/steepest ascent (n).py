@@ -5,10 +5,7 @@ from problem import Numeric
 DELTA = 0.01   # Mutation(돌연변이) step size 
 NumEval = 0    # Total number of evaluations
 
-
-
 def main():
-    global p
     p = Numeric()
     # Create an instance of numerical optimization problem
     p.setVariables
@@ -19,7 +16,7 @@ def main():
     p.describe()
     displaySetting(p)
     
-def steepestAscent():
+def steepestAscent(p):
     current = p.randomInit # 'current' is a list of values
     valueC = p.evaluate(current)
     while True:
@@ -32,7 +29,7 @@ def steepestAscent():
             valueC = valueS
     return current, valueC
 
-def bestOf(neighbors): ###
+def bestOf(neighbors,p): ###
     best = neighbors[0]
     bestValue = p.evaluate(best)
 
@@ -44,7 +41,7 @@ def bestOf(neighbors): ###
 
     return best, bestValue
 
-def displaySetting():
+def displaySetting(p):
     print()
     print("Search algorithm: Steepest-Ascent Hill Climbing")
     print()
