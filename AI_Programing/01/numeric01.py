@@ -30,10 +30,10 @@ def createProblem(): ### 똑같은 수치문제니까. 읽어오고 변수 만�
              
     infile.close()
     domain = [varName, low, up]
-    return expression, domain
+    return expression, domain # expression : 최적화에 쓰이는 함수 (정해진 공식)
 
 def randomInit(p): ###
-    domain = p[1] 
+    domain = p[1]  # p : 해결해야할 문제
     low = domain[1]
     up = domain[2]
     init = []

@@ -1,7 +1,4 @@
-#import numeric
-# numeric.
-
-from numeric import * #이렇게 하면 한방에 다 들여오니 numeric.createProblem() 이런식으로 다 안바꿔도된다.
+from numeric01 import * #이렇게 하면 한방에 다 들여오니 numeric.createProblem() 이런식으로 다 안바꿔도된다.
 
 def main():
     # Create an instance of numerical optimization problem
