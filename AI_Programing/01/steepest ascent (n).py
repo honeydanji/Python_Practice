@@ -1,5 +1,7 @@
 import random
 import math
+import sys
+sys.path.append('../02')  # Adds the 02 directory to the Python path
 
 DELTA = 0.01   # Mutation(돌연변이) step size 
 NumEval = 0    # Total number of evaluations
@@ -7,6 +9,7 @@ NumEval = 0    # Total number of evaluations
 
 def main():
     # Create an instance of numerical optimization problem
+    p = Numeric()
     p = createProblem()   # 'p': (expr, domain)
     # Call the search algorithm
     solution, minimum = steepestAscent(p)
