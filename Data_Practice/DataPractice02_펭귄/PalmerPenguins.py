@@ -2,15 +2,14 @@ import seaborn as sns
 import pandas as pd
 import xgboost as xgb
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV, train_test_split, cross_val_score
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from time import time
 
 # 그래프 한글
 plt.rcParams['font.family'] ='Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] =False
-
 
 ### 목표 : 펭귄의 종을 분류하는 모델을 만들어라!!!
 
@@ -22,7 +21,7 @@ penguins = sns.load_dataset('penguins')
 print(penguins.dtypes) # 타입 확인
 
 ## 데이터 전처리
-penguins = penguins.dropna()# NaN 삭제하기(결측치 정리)
+penguins = penguins.dropna(subset=['sex'])# NaN 삭제하기(결측치 정리)
 #print(penguins.head()) # NaN 삭제후 데이터 확인
 #print(len(penguins)) 
 
@@ -39,8 +38,6 @@ for column in penguins.columns:
 # 왜? >> 대부분 기계 학습 모델은 숫자 입력이 필요하고 범주형 데이터로 
 # 작업하기가 힘들다. 그래서 숫자 데이터로 변환시켜야 한다. 
 # 현재 펭귄 데이터 타입을 보면 species는 object 타입인걸 알 수 있다.
-
-
 
 ## 훈련데이터와 테스트데이터로 나누기
 X = penguins.drop("species", axis=1) # 'species' 열을 삭제하고 새로운 데이터프레임을 X에 저장한다.
@@ -111,7 +108,6 @@ param_grid = {
     'max_depth': [3, 4, 5, 6, 7, 8],  # 트리의 최대 깊이 리스트 설정
     'n_estimators': [50, 100, 200, 300]  # 부스팅 스테이지(결정트리 개수) 리스트 설정
 }
-
     # 왜? girdsearch의 근본적인 이유를 생각하면 된다.
     # 학습률, 트리깊이, 트리 개수를 다양하게 지정해야만
     # 이 중에서 최상의 조합을 찾을 수 있다.
@@ -126,12 +122,17 @@ xgb_model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
 # 하지만 이미 라벨 인코딩으로 데이터를 처리 했기 때문에 혼동을 주지 않기 위해 
 # 해당 기능을 비활성화 시킨 것이다. 
 # 즉 "내가 이미 범주형 변수의 인코딩을 처리했으므로 XGBoost가 그것에 대해 걱정할 필요가 없다." 라는 의미다.
-
-
+# + eval_metric='mlogloss' : 다중클래스분류 알고리즘.
 
 ## 그리드 서치 객체 생성
 grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=3, scoring='accuracy')  
 # 그리드 서치 객체 생성. estimator는 사용할 모델, param_grid는 테스트할 하이퍼파라미터 그리드, cv는 cross-validation 분할 개수, scoring은 성능 평가 지표
+
+# 교차 검증을 수행하고 결과를 출력합니다.
+scores = cross_val_score(grid_search, X_train, y_train, cv=5)
+print("교차 검증 점수: ", scores)
+print("평균 교차 검증 점수: ", scores.mean())
+#교차 검즘을 하는 이유가 뭘까?
 
 ## 그리드 서치 학습
 grid_search.fit(X_train, y_train)  # 학습 데이터를 이용하여 그리드 서치 학습
@@ -147,18 +148,16 @@ print('Best max_depth:', grid_search.best_estimator_.get_params()['max_depth']) 
 print('Best n_estimators:', grid_search.best_estimator_.get_params()['n_estimators'])  # 최적 부스팅 스테이지 출력
 
 ## 최적 모델로 예측
-
-best_xgb_model = grid_search.best_estimator_  
-### 최적 모델 추출
-y_pred = best_xgb_model.predict(X_test)  
-### 테스트 데이터에 대한 예측 수행
+best_xgb_model = grid_search.best_estimator_  ### 최적 모델 추출
+ 
+# 혼동 행렬과 분류 보고서를 생성
+y_pred = best_xgb_model.predict(X_test)  ### 테스트 데이터에 대한 예측 수행
+print("혼동 행렬: \n", confusion_matrix(y_test, y_pred))
+print("분류 보고서: \n", classification_report(y_test, y_pred))
 
 # 정확도 계산
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy}")
-
-
-
 
 #### 펭귄을 분류하는데 있어서 각 특징들의 중요도를 나타낸다.
 
@@ -182,24 +181,6 @@ plt.title('펭귄 신체데이터')
 plt.xlabel('중요도')
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ### 개념
