@@ -35,7 +35,7 @@ for colums in penguins.columns: ### 펭귄 특성 하나씩 가져와서
         penguins[colums] = LabelEncoder().fit_transform(penguins[colums]) ### 조건이 일치하면 전부 숫자타입으로 변환
 
 ## 데이터 분리하기
-X = penguins.dorp("species", axis=1) ### 타겟변수 제거
+X = penguins.drop("species", axis=1) ### 타겟변수 제거
 y = penguins["species"] ### 타겟변수 저장 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y) ### 테스트 데이터 30% , 대상변수 y 지정
