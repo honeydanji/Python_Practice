@@ -11,13 +11,14 @@ from sklearn.neighbors import KNeighborsClassifier # 최근접 이웃 알고리�
 
 ## 데이터 불러오기
 iris = sns.load_dataset('iris') 
+print(iris['species'].value_counts())
 
 ## 데이터 분석
 # print(iris.head()) ### 데이터 확인하기
 # print(len(iris)) ### 데이터 수 확인하기
 # print(iris.keys()) ### 데이터 key-value 확인하기 >> 데이터가 딕셔너리 형태
 # print(iris.dtypes) ### 데이터 타입 확인 >> 라벨 인코딩 사용 여부 판단
-# print(iris.info()) ### 데이터 세부사항 확인 >> 타입, 열, 수, 결측치 전부 확인이 가능하다.
+print(iris.info()) ### 데이터 세부사항 확인 >> 타입, 열, 수, 결측치 전부 확인이 가능하다.
                    ### 결측치가 없기 때문에 따로 처리 하지 않아도 된다.
                    
 # print(iris.isnull()) ### 결측치 확인
@@ -78,7 +79,7 @@ plt.show() ### 이웃수에 따른 결과값 그래프
 logreg = LogisticRegression()
 logreg.fit(X_train, y_train)
 y_pred = logreg.predict(X_test)
-print(metrics.accuracy_score(y_test, y_pred))
+print("version4: ",metrics.accuracy_score(y_test, y_pred))
 
 ### k(이웃수)의 따라서 새로운 데이터의 형태가 달라진다.
 ### k는 데이터의 민감도와 관련이 있다. 왜??
@@ -95,7 +96,7 @@ print(metrics.accuracy_score(y_test, y_pred))
 ## version1(이웃수 고정)
 knn = KNeighborsClassifier(n_neighbors=3)
 knn.fit(X_train, y_train)
-print(knn.predict([[6, 3, 4, 2]]))
+print("version1: ",knn.predict([[6, 3, 4, 2]]))
 ### 이웃수를 시작부터 고정할 수 있지만, 모델의 성능을 높이기 위해서 
 ### k값을 범위로 주고 하나씩 전부 돌려본 다음 최상의 값이 나온 값을 사용하기 위함이다.
 
