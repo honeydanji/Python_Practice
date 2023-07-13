@@ -28,7 +28,7 @@ plt.show() ### 데이터 눈으로 확인
 
 ## 데이터 분류 및 모델 학습
 X = iris.drop('species', axis=1) ### 타겟변수 제외
-y = iris['speceis'] ### 타겟변수 저장
+y = iris['species'] ### 타겟변수 저장
 
 
 ## Version1 -생략- (KNN-이웃수 고정)
