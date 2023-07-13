@@ -17,6 +17,7 @@ plt.rcParams['axes.unicode_minus'] = False
 
 ## 데이터 준비
 penguins = sns.load_dataset('penguins')
+print(penguins['species'].value_counts())
 
 ## 데이터 구성 확인
 print(penguins.head()) ### 앞에서 5개
