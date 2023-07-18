@@ -5,8 +5,21 @@ class HillClimbing:
         Setup.__init__(self) #alpha, delta, dx 상속받음
         self._pType = 0
         self._limitStock = 100
+        
+        self._numExp = 0
+        self._numRestart = 0
+        
+    def setVariable(self, parameters):
+        Setup.setVariavles(self, parameters)
+        self._pType = parameters['pType']
+        self._limitStock = parameters['limitStock']
+        self._numExp = parameters['numExp']
+        self._numRestart = parameters['numRestart']
     
     def run(self):
+        pass
+    
+    def randomRestart(self, p):
         pass
         
     def displaySetting(self):

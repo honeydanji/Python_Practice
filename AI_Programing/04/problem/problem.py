@@ -10,8 +10,26 @@ class Problem:
         self._value = 0
         self._numEval = 0
         
-    def setVariables(self): # createProblem
-        pass
+        self._bestSolution = []
+        self._bestMinimum = 0.0
+        self._avgMinimum = 0.0
+        self._avgNumEval = 0
+        self._sumOfNumEval = 0
+        
+        self._pFileName = ''
+        
+    def setVariables(self, parameters): # createProblem
+        self._pFileName = parameters['pFileName']
+        Setup.setVariavles(self, parameters)
+        
+    def getSolution(self):
+        return self._solution
+    
+    def getValue(self):
+        return self._value
+    
+    def getNumEval(self):
+        return self._numEval
     
     def randomInit(self):
         pass
@@ -31,6 +49,13 @@ class Problem:
     def storeResult(self, solution, value): # 최종 솔루션을 저장하는 함수
         self._solution = solution
         self._value = value
+        
+    def storeExpResult(self, results):
+        self._bestSolution = results[0]
+        self._bestMinimum = results[1]
+        self._avgMinimum = results[2]
+        self._avgNumEval = results[3]
+        self._sumOfNumEval = results[4]
     
     def report(self): # numEval을 출력해주는 함수
         print()
@@ -43,19 +68,19 @@ class Numeric(Problem): # Problem에서 상속을 받겠다
         self._domain = []
 
     
-    def getDelta(self): # displaysetting에서 delta를 사용하기 위해
-        return self._delta
+    # def getDelta(self): # displaysetting에서 delta를 사용하기 위해
+    #     return self._delta
     
-    def getalpha(self):
-        return self._alpha
+    # def getalpha(self):
+    #     return self._alpha
     
-    def getdx(self):
-        return self._dx
+    # def getdx(self):
+    #     return self._dx
      
     def setVariables(self): # createProblem
         ## Read in an expression and its domain from a file.
         fileName = input("Enter the filename of a fuction: ")
-        fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v2/problem/{fileName}.txt"
+        # fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v2/problem/{fileName}.txt"
         # fileName = f"C:/K-Digital3/AI_Programming/Mr.Gam/Search Tool v1 - program codes/problem/{fileName}.txt"
         infile = open(fileName, 'r')
         ## Then, return a problem 'p'.
@@ -210,7 +235,7 @@ class Tsp(Problem): # Problem에서 상속을 받겠다
     def setVariables(self):
         ## Read in a TSP (# of cities, locatioins) from a file.
         ## Then, create a problem instance and return it.
-        fileName = input("Enter the file name of a TSP: ")
+        # fileName = input("Enter the file name of a TSP: ")
         #fileName = 'problem/{filename}.txt'
         fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v2/problem/{fileName}.txt"
         infile = open(fileName, 'r')
@@ -313,9 +338,10 @@ class Tsp(Problem): # Problem에서 상속을 받겠다
                 
     def report(self): # numEval을 출력해주는 함수
         print()
+        print("Average tour cost: {0:,}".format(round(self._avgMinimum)))
         print("Best order of visits:")
         self.tenPerRow()       # Print 10 cities per row
-        print("Minimum tour cost: {0:,}".format(round(self._value)))
+        print("Best Minimum tour cost: {0:,}".format(round(self._bestMinimum)))
         Problem.report(self)
 
     def tenPerRow(self):
