@@ -77,22 +77,16 @@ class Numeric(Problem): # Problem에서 상속을 받겠다
     # def getdx(self):
     #     return self._dx
      
-    def setVariables(self): # createProblem
+    def setVariables(self, parameters): # createProblem
         ## Read in an expression and its domain from a file.
-        fileName = input("Enter the filename of a fuction: ")
+        ## fileName = input("Enter the filename of a fuction: ")
         # fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v2/problem/{fileName}.txt"
         # fileName = f"C:/K-Digital3/AI_Programming/Mr.Gam/Search Tool v1 - program codes/problem/{fileName}.txt"
-        infile = open(fileName, 'r')
-        ## Then, return a problem 'p'.
-        ## 'p' is a tuple of 'expression' and 'domain'.
-        ## 'expression' is a string.
+        Problem.setVariables(self, parameters)
+        infile = open(self._pFileName, 'r')
         self._expression = infile.readline().strip()
-        ## 'domain' is a list of 'varNames', 'low', and 'up'.
-        ## 'varNames' is a list of variable names.
         varNames = []
-        ## 'low' is a list of lower bounds of the varaibles.
         low = [] 
-        ## 'up' is a list of upper bounds of the varaibles.
         up = []
 
         line = infile.readline().strip()
@@ -212,7 +206,6 @@ class Numeric(Problem): # Problem에서 상속을 받겠다
         for i in range(len(low)):
             print(" " + varNames[i] + ":", (low[i], up[i])) 
     
-    
     def report(self): # numEval을 출력해주는 함수
         print()
         print("Solution found:")
@@ -232,13 +225,15 @@ class Tsp(Problem): # Problem에서 상속을 받겠다
         self._distanceTable = []
 
     
-    def setVariables(self):
+    def setVariables(self, parameters):
+        Problem.setVariables(self, parameters)
+        infile = open(self._pFileName, 'r')
+        self._expression = infile.readline().strip()
+     
         ## Read in a TSP (# of cities, locatioins) from a file.
         ## Then, create a problem instance and return it.
         # fileName = input("Enter the file name of a TSP: ")
         #fileName = 'problem/{filename}.txt'
-        fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v2/problem/{fileName}.txt"
-        infile = open(fileName, 'r')
         # First line is number of cities
         self._numCities = int(infile.readline()) #첫번째 라인: 도시수
 

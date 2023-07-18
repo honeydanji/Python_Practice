@@ -15,12 +15,29 @@ class HillClimbing:
         self._limitStock = parameters['limitStock']
         self._numExp = parameters['numExp']
         self._numRestart = parameters['numRestart']
+        
+    def getNumExp(self):
+        return self._numExp
     
     def run(self):
         pass
     
     def randomRestart(self, p):
-        pass
+        self.run(p)
+        bestSolution = p.getSolution()
+        bestMinmum = p.getValue()
+        numEval = p.getNumEval()
+        
+        for i in range(1, self._numRestart):
+            self.run(p)
+            newSolution = p.getSolution()
+            newMinmum = p.getValue()
+            numEval = p.getNumEval()
+            if newMinmum < bestMinmum:
+                bestMinmum = newMinmum
+                bestSolution = newSolution
+        p.storeResult(bestSolution, bestMinmum)
+        
         
     def displaySetting(self):
         if self._pType == 1: # Numeric일떄
