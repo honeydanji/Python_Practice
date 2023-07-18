@@ -1,62 +1,70 @@
-import random
+import random as rd
 import math
 
-DELTA = 0.01   
-LIMIT_STUCK = 100 #상수는 뭐 안쓰더라도 이 코드있다고 상관있나.
-NumEval = 0    
+DELTA = 0.01   # Mutation step size
+LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement
+NumEval = 0    # Total number of evaluations
 
-def createProblem(): ### 똑같은 수치문제니까. 읽어오고 변수 만들고 하는건 똑같다. #최소값 찾는 알고리즘만 달라
+def createProblem(): ###
     ## Read in an expression and its domain from a file.
+    fileName = input("Enter the filename of a fuction: ")
+    fileName = f"C:/Ye_Dong/AI_Programming/P.Gam/02/Search_Tool_v1_program_codes_modules/problem/{fileName}.txt"    
+    # fileName = f"C:/K-Digital3/AI_Programming/Mr.Gam/Search Tool v1 - program codes/problem/{fileName}.txt"
+    infile = open(fileName, 'r')
     ## Then, return a problem 'p'.
     ## 'p' is a tuple of 'expression' and 'domain'.
     ## 'expression' is a string.
+    expression = infile.readline().strip()
     ## 'domain' is a list of 'varNames', 'low', and 'up'.
     ## 'varNames' is a list of variable names.
+    varNames = []
     ## 'low' is a list of lower bounds of the varaibles.
+    low = [] 
     ## 'up' is a list of upper bounds of the varaibles.
-    fileName = "problem/" + input("Enter the filename of function:") + ".txt"
-    infile = open(fileName,'r')
-    expression = infile.readline() #txt파일 공식적힌 첫째줄
-    varName = []
-    low = []
     up = []
-    line = infile.readline()        
+
+    line = infile.readline().strip()
     while line != '':
         data = line.split(',')
-        varName.append(data[0])
-        low.append(float(data[1]))
-        up.append(float(data[2]))
-        line = infile.readline() 
-             
+        varNames.append(data[0])
+        low.append(float(data[1])) #Convert to float
+        up.append(float(data[2])) #Convert to float
+        line = infile.readline().strip()
+    
+
+    domain = [varNames, low, up]
     infile.close()
-    domain = [varName, low, up]
-    return expression, domain # expression : 최적화에 쓰이는 함수 (정해진 공식)
+    return expression, domain
 
 def randomInit(p): ###
-    domain = p[1]  # p : 해결해야할 문제
+
+    domain = p[1]
     low = domain[1]
     up = domain[2]
-    init = []
-    for i in range(len(low)): 
-        r = random.uniform(low[i], up[i]) 
-        init.append(r)
     
+    init = []
+    for i in range(len(low)):
+        r = rd.uniform(low[i], up[i]) #uniform low bound, upper bound 에서 수를 랜덤하게 뽑아냄
+        init.append(r)
+
     return init    # Return a random initial point
                    # as a list of values
-                   
-                   
+
 def evaluate(current, p):
     ## Evaluate the expression of 'p' after assigning
     ## the values of 'current' to the variables
-    global NumEval
+    global NumEval #함수 내부에서 값이 바뀔때는 global 선언을 해주어야 한다. 
     
     NumEval += 1
     expr = p[0]         # p[0] is function expression
-    varNames = p[1][0]  # p[1] is domain: [varNames, low, up]
+    # domain = p[1] # p[1] is domain
+    # varNames = domain[0]  
+    varNames = p[1][0]
     for i in range(len(varNames)):
-        assignment = varNames[i] + '=' + str(current[i])
-        exec(assignment)
-    return eval(expr)
+        assignment = varNames[i] + '=' + str(current[i]) #ex. 'x1 = 3.2' 이런식으로 들어감
+        exec(assignment) #exec함수: statement 계산 (String 값) -> 문자열로 표현된 식을 exec함수가 계산 가능한 함수로 인식
+    return eval(expr) 
+    #eval함수: expression 계산 (String 값) -> 문자열로 표현된 식을 exec함수가 계산 가능한 함수로 인식
 
 def mutate(current, i, d, p): ## Mutate i-th of 'current' if legal
     curCopy = current[:]
@@ -73,11 +81,17 @@ def describeProblem(p):
     print(p[0])   # Expression
     print("Search space:")
     varNames = p[1][0] # p[1] is domain: [VarNames, low, up]
-    low = p[1][1] 
+    low = p[1][1]
     up = p[1][2]
     for i in range(len(low)):
         print(" " + varNames[i] + ":", (low[i], up[i])) 
-        
+
+def displaySetting():
+    print()
+    print("Search algorithm: Steepest-Ascent Hill Climbing")
+    print()
+    print("Mutation step size:", DELTA)
+
 def displayResult(solution, minimum):
     print()
     print("Solution found:")
@@ -85,7 +99,7 @@ def displayResult(solution, minimum):
     print("Minimum value: {0:,.3f}".format(minimum))
     print()
     print("Total number of evaluations: {0:,}".format(NumEval))
-    
+
 def coordinate(solution):
     c = [round(value, 3) for value in solution]
     return tuple(c)  # Convert the list to a tuple

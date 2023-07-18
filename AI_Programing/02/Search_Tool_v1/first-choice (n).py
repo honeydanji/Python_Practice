@@ -1,7 +1,8 @@
 import random as rd
-import math 
+import math
 
 DELTA = 0.01   # Mutation step size
+LIMIT_STUCK = 100 # Max number of evaluations enduring no improvement
 NumEval = 0    # Total number of evaluations
 
 
@@ -9,7 +10,7 @@ def main():
     # Create an instance of numerical optimization problem
     p = createProblem()   # 'p': (expr, domain)
     # Call the search algorithm
-    solution, minimum = steepestAscent(p)
+    solution, minimum = firstChoice(p)
     # Show the problem and algorithm settings
     describeProblem(p)
     displaySetting()
@@ -20,7 +21,7 @@ def main():
 def createProblem():
     ## Read in an expression and its domain from a file.
     filename = input("파일명을 입력하세요 : ")
-    filename = f"C:/Ye_Dong/AI_Programming/P.Gam/01/problem/{filename}.txt"
+    filename = f"C:/Ye_Dong/AI_Programming/P.Gam/Search_Tool_v1/problem/{filename}.txt"
     infile = open(filename, 'r')
     ## Then, return a problem 'p'.
     ## 'p' is a tuple of 'expression' and 'domain'.
@@ -47,17 +48,19 @@ def createProblem():
 
 
 
-def steepestAscent(p):
-    current = randomInit(p) # 'current' is a list of values # 현재의 시작점
-    valueC = evaluate(current, p) # 시작점에 해당하는 함수값
-    while True:
-        neighbors = mutants(current, p)
-        successor, valueS = bestOf(neighbors, p) # successor : 제일 좋은 변수 / valueS : 제일 좋은 함수값
-        if valueS >= valueC: # 현재보다 좋은지 비교
-            break # 후보값이 더 크면 나빠진 것음으로 탈출
-        else:
+def firstChoice(p):
+    current = randomInit(p)   # 'current' is a list of values
+    valueC = evaluate(current, p)
+    i = 0
+    while i < LIMIT_STUCK:
+        successor = randomMutant(current, p)
+        valueS = evaluate(successor, p)
+        if valueS < valueC:
             current = successor
             valueC = valueS
+            i = 0              # Reset stuck counter
+        else:
+            i += 1
     return current, valueC
 
 
@@ -72,29 +75,26 @@ def randomInit(p):
 
     return init    # Return a random initial point as a list of values
 
-def evaluate(current, p): # current : x의 값이 저장 / p : xn저장
+
+def evaluate(current, p):
     ## Evaluate the expression of 'p' after assigning
     ## the values of 'current' to the variables
-    global NumEval # 함수 내부에서 값이 바뀔때는 global 선언을 해줘야 함
+    global NumEval
     
-    NumEval += 1 # 호출 될 때마다 1씩 증가
+    NumEval += 1
     expr = p[0]         # p[0] is function expression
-    varNames = p[1][0]  # p[1] is domain
+    varNames = p[1][0]  # p[1] is domain: [varNames, low, up]
     for i in range(len(varNames)):
         assignment = varNames[i] + '=' + str(current[i])
-        exec(assignment) # exec : statement 계산 (String 형태)
-    return eval(expr) # eval : expression 계산(string 형태)
+        exec(assignment)
+    return eval(expr)
 
 
-def mutants(current, p): 
-    neighbors = []
-    for i in range(len(current)):
-        mutant = mutate(current, i, DELTA, p)
-        neighbors.append(mutant)
-        mutant = mutate(current, i, -DELTA, p)
-        neighbors.append(mutant)
-    
-    return neighbors     # Return a set of successors
+def randomMutant(current, p): 
+    i = rd.randint(0, len(current)-1) # index : -1을 하는 이유는 마지막꺼 안쓸려구
+    d = rd.uniform(-DELTA, DELTA)
+
+    return mutate(current, i, d, p) # Return a random successor
 
 
 def mutate(current, i, d, p): ## Mutate i-th of 'current' if legal
@@ -105,17 +105,6 @@ def mutate(current, i, d, p): ## Mutate i-th of 'current' if legal
     if l <= (curCopy[i] + d) <= u:
         curCopy[i] += d
     return curCopy
-
-def bestOf(neighbors, p): 
-    best = neighbors[0]
-    bestValue = evaluate(best, p)
-    
-    for i in range(1, len(neighbors)):
-        val = evaluate(neighbors[i],p)
-        if(val < bestValue):
-            best = neighbors[i]
-            bestValue = val
-    return best, bestValue
 
 def describeProblem(p):
     print()
@@ -130,7 +119,7 @@ def describeProblem(p):
 
 def displaySetting():
     print()
-    print("Search algorithm: Steepest-Ascent Hill Climbing")
+    print("Search algorithm: First-Choice Hill Climbing")
     print()
     print("Mutation step size:", DELTA)
 
@@ -145,6 +134,5 @@ def displayResult(solution, minimum):
 def coordinate(solution):
     c = [round(value, 3) for value in solution]
     return tuple(c)  # Convert the list to a tuple
-
 
 main()
